@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Phone Catalog</title>
+
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700" rel="stylesheet">
+        <!-- Bootstrap CSS -->
+        <link href="{{url_for('static', filename='../static/css/bootstrap.min.css')}}" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link href="{{url_for('static', filename='../static/css/style.css')}}" rel="stylesheet">
+
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg top-menu">
+            <div class="container">
+                <div class="col-md-8">
+                    <a class="navbar-brand logo" href="{{ url_for('main') }}">Phone Catalog</a>
+                </div>
+                <div class="col-md-4 text-right">
+                    {% if isAuthenticated == False %}
+                    <a href="{{ url_for("showLogin") }}"><button type="button" class="btn btn-primary btn-lg login-btn">Login</button></a>
+                    {% elif isAuthenticated == True %}
+                    <a href="{{ url_for("disconnect") }}"><button type="button" class="btn btn-primary btn-lg login-btn">Logout</button></a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        <div class="container main-content">
+            <div class="col-md-4 categories">
+                {% with messages = get_flashed_messages() %}
+      			{% if messages %}
+        			{% for message in messages %}
+           		 	<strong> {{ message }} </strong>
+        			{% endfor %}
+        		{% endif %}
+    			{% endwith %}
+                <h1>Categories</h1>
+                <ul>
+                    {% for c in catalog %}
+                    <li><a href="{{url_for('category', category_name=c.name)}}">{{ c.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-8 latest-items">
+                <h1>Latest Items</h1>
+                {% if isAuthenticated == True %}
+                <a href="{{ url_for("addItem") }}" class="add">Add Item</a>
+                <a href="{{url_for('addCategory')}}" class="add">Add Category</a>
+                {% endif %}
+                <ul>
+                    {% for i in items %}
+                    <li><a href="{{ url_for('item', category_name = i.category.name, item_name = i.name.replace(" ", "_")) }}">{{ i.name }}</a> ({{ i.category.name }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>
